@@ -23,8 +23,10 @@ import uk.ac.aber.dcs.cs31620.faa.ui.theme.FAATheme
 import kotlin.random.Random
 
 /**
- * Represents the home screen. For this version we only have a
- * top app bar and empty content.
+ * Represents the home screen. For this version we have
+ * an ImageView of kittens, followed by some text, followed
+ * by an ImageView with an image that is randomly obtained.
+ * Later versions will use a database.
  * @author Chris Loftus
  */
 @Composable
