@@ -1,7 +1,6 @@
 package uk.ac.aber.dcs.cs31620.faa.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,9 +9,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Login
-import androidx.compose.material3.*
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs31620.faa.R
 import uk.ac.aber.dcs.cs31620.faa.ui.navigation.Screen
 import uk.ac.aber.dcs.cs31620.faa.ui.theme.FAATheme
+
 /**
  * Creates the navigation drawer. Uses Material 3 ModalNavigationDrawer.
  * Current implementation has an image at the top and then three items.
@@ -36,7 +43,6 @@ import uk.ac.aber.dcs.cs31620.faa.ui.theme.FAATheme
  * @param content To pass in the page content for the page when the navigation drawer is closed
  * @author Chris Loftus
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPageNavigationDrawer(
     navController: NavHostController,
@@ -65,53 +71,53 @@ fun MainPageNavigationDrawer(
             // Not sure if rememberSaveable or remember is what we
             // want since it stays selected when we close and
             // reopen the drawer. However...
-            val selectedItem = rememberSaveable { mutableStateOf(0) }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize()
-            ) {
-                // This probably doesn't add much, although we
-                // have quite a bit of screen space, even in landscape
-                // Anything larger and can lose the buttons in landscape
-                Image(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(bottom = 16.dp, top = 16.dp),
-                    painter = painterResource(id = R.drawable.kitten_small),
-                    contentDescription = stringResource(R.string.small_kitten),
-                    contentScale = ContentScale.Crop
-                )
-
-                items.forEachIndexed { index, item ->
-                    NavigationDrawerItem(
-                        icon = {
-                            Icon(
-                                imageVector = item.first,
-                                contentDescription = item.second
-                            )
-                        },
-                        label = { Text(item.second) },
-                        // I'm not sure that having a default selected makes sense
-                        selected = index == selectedItem.value,
-                        onClick = {
-                            // Here we would navigate to appropriate page
-                            // We'll just set as selected.
-                            selectedItem.value = index
-
-                            // Exercise solution. Just close the drawer
-                            // and navigate
-                            if (index == 0) {
-                                // If we don't do this the drawer will be hidden
-                                // when we navigate to the login screen, however,
-                                // the back button etc will take us back to the
-                                // open drawer, which is not usual behaviour
-                                closeDrawer()
-                                navController.navigate(route = Screen.Login.route)
-                            }
-                        }
+            val selectedItem = rememberSaveable { mutableIntStateOf(0) }
+            ModalDrawerSheet {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // This probably doesn't add much, although we
+                    // have quite a bit of screen space, even in landscape
+                    // Anything larger and can lose the buttons in landscape
+                    Image(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .padding(bottom = 16.dp, top = 16.dp),
+                        painter = painterResource(id = R.drawable.kitten_small),
+                        contentDescription = stringResource(R.string.small_kitten),
+                        contentScale = ContentScale.Crop
                     )
+
+                    items.forEachIndexed { index, item ->
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = item.first,
+                                    contentDescription = item.second
+                                )
+                            },
+                            label = { Text(item.second) },
+                            // I'm not sure that having a default selected makes sense
+                            selected = index == selectedItem.value,
+                            onClick = {
+                                // Here we would navigate to appropriate page
+                                // We'll just set as selected.
+                                selectedItem.value = index
+
+                                // Exercise solution. Just close the drawer
+                                // and navigate
+                                if (index == 0) {
+                                    // If we don't do this the drawer will be hidden
+                                    // when we navigate to the login screen, however,
+                                    // the back button etc will take us back to the
+                                    // open drawer, which is not usual behaviour
+                                    closeDrawer()
+                                    navController.navigate(route = Screen.Login.route)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         },
@@ -119,7 +125,6 @@ fun MainPageNavigationDrawer(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun MainPageNavigationDrawerPreview() {
